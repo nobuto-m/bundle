@@ -56,6 +56,8 @@ applications:
       calico-node-image: 659
       calico-upgrade: 804
       calico-upgrade-arm64: 804
+    options:
+      ipip: Always
   easyrsa-cluster1:
     annotations:
       gui-x: '90'
@@ -132,6 +134,8 @@ applications:
       calico-node-image: 659
       calico-upgrade: 804
       calico-upgrade-arm64: 804
+    options:
+      ipip: Always
   easyrsa-cluster2:
     annotations:
       gui-x: '90'
