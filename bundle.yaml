@@ -57,6 +57,7 @@ applications:
       calico-upgrade: 804
       calico-upgrade-arm64: 804
     options:
+      ignore-loose-rpf: true
       ipip: Always
   easyrsa-cluster1:
     annotations:
@@ -135,6 +136,7 @@ applications:
       calico-upgrade: 804
       calico-upgrade-arm64: 804
     options:
+      ignore-loose-rpf: true
       ipip: Always
   easyrsa-cluster2:
     annotations:
