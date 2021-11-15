@@ -1,0 +1,209 @@
+description: A minimal two-machine Kubernetes cluster, appropriate for development.
+series: focal
+machines:
+  '0':
+    constraints: cores=2 mem=4G root-disk=16G
+    series: focal
+  '1':
+    constraints: cores=4 mem=4G root-disk=16G
+    series: focal
+
+  '2':
+    constraints: cores=2 mem=4G root-disk=16G
+    series: focal
+  '3':
+    constraints: cores=4 mem=4G root-disk=16G
+    series: focal
+
+applications:
+  calico-cluster1:
+    annotations:
+      gui-x: '475'
+      gui-y: '605'
+    charm: cs:~containers/calico-838
+    resources:
+      calico: 977
+      calico-arm64: 976
+      calico-node-image: 659
+      calico-upgrade: 804
+      calico-upgrade-arm64: 804
+    options:
+      ipip: Always
+  easyrsa-cluster1:
+    annotations:
+      gui-x: '90'
+      gui-y: '420'
+    charm: cs:~containers/easyrsa-420
+    num_units: 1
+    resources:
+      easyrsa: 5
+    to:
+    - lxd:0
+  etcd-cluster1:
+    annotations:
+      gui-x: '800'
+      gui-y: '420'
+    charm: cs:~containers/etcd-634
+    num_units: 1
+    options:
+      channel: 3.4/stable
+    resources:
+      core: 0
+      etcd: 3
+      snapshot: 0
+    to:
+    - '0'
+  kubernetes-master-cluster1:
+    annotations:
+      gui-x: '800'
+      gui-y: '850'
+    charm: cs:~containers/kubernetes-master-1078
+    constraints: cores=2 mem=4G root-disk=16G
+    expose: true
+    num_units: 1
+    options:
+      channel: 1.22/stable
+    resources:
+      cdk-addons: 0
+      core: 0
+      kube-apiserver: 0
+      kube-controller-manager: 0
+      kube-proxy: 0
+      kube-scheduler: 0
+      kubectl: 0
+    to:
+    - '0'
+  kubernetes-worker-cluster1:
+    annotations:
+      gui-x: '90'
+      gui-y: '850'
+    charm: cs:~containers/kubernetes-worker-816
+    constraints: cores=4 mem=4G root-disk=16G
+    expose: true
+    num_units: 1
+    options:
+      channel: 1.22/stable
+    resources:
+      cni-amd64: 933
+      cni-arm64: 924
+      cni-s390x: 936
+      core: 0
+      kube-proxy: 0
+      kubectl: 0
+      kubelet: 0
+    to:
+    - '1'
+
+  calico-cluster2:
+    annotations:
+      gui-x: '475'
+      gui-y: '605'
+    charm: cs:~containers/calico-838
+    resources:
+      calico: 977
+      calico-arm64: 976
+      calico-node-image: 659
+      calico-upgrade: 804
+      calico-upgrade-arm64: 804
+    options:
+      ipip: Always
+  easyrsa-cluster2:
+    annotations:
+      gui-x: '90'
+      gui-y: '420'
+    charm: cs:~containers/easyrsa-420
+    num_units: 1
+    resources:
+      easyrsa: 5
+    to:
+    - lxd:2
+  etcd-cluster2:
+    annotations:
+      gui-x: '800'
+      gui-y: '420'
+    charm: cs:~containers/etcd-634
+    num_units: 1
+    options:
+      channel: 3.4/stable
+    resources:
+      core: 0
+      etcd: 3
+      snapshot: 0
+    to:
+    - '2'
+  kubernetes-master-cluster2:
+    annotations:
+      gui-x: '800'
+      gui-y: '850'
+    charm: cs:~containers/kubernetes-master-1078
+    constraints: cores=2 mem=4G root-disk=16G
+    expose: true
+    num_units: 1
+    options:
+      channel: 1.22/stable
+    resources:
+      cdk-addons: 0
+      core: 0
+      kube-apiserver: 0
+      kube-controller-manager: 0
+      kube-proxy: 0
+      kube-scheduler: 0
+      kubectl: 0
+    to:
+    - '2'
+  kubernetes-worker-cluster2:
+    annotations:
+      gui-x: '90'
+      gui-y: '850'
+    charm: cs:~containers/kubernetes-worker-816
+    constraints: cores=4 mem=4G root-disk=16G
+    expose: true
+    num_units: 1
+    options:
+      channel: 1.22/stable
+    resources:
+      cni-amd64: 933
+      cni-arm64: 924
+      cni-s390x: 936
+      core: 0
+      kube-proxy: 0
+      kubectl: 0
+      kubelet: 0
+    to:
+    - '3'
+relations:
+- - kubernetes-master-cluster1:kube-control
+  - kubernetes-worker-cluster1:kube-control
+- - kubernetes-master-cluster1:certificates
+  - easyrsa-cluster1:client
+- - kubernetes-master-cluster1:etcd
+  - etcd-cluster1:db
+- - kubernetes-worker-cluster1:certificates
+  - easyrsa-cluster1:client
+- - etcd-cluster1:certificates
+  - easyrsa-cluster1:client
+- - calico-cluster1:cni
+  - kubernetes-master-cluster1:cni
+- - calico-cluster1:cni
+  - kubernetes-worker-cluster1:cni
+
+- - calico-cluster1:etcd
+  - etcd-cluster1:db
+
+- - kubernetes-master-cluster2:kube-control
+  - kubernetes-worker-cluster2:kube-control
+- - kubernetes-master-cluster2:certificates
+  - easyrsa-cluster2:client
+- - kubernetes-master-cluster2:etcd
+  - etcd-cluster2:db
+- - kubernetes-worker-cluster2:certificates
+  - easyrsa-cluster2:client
+- - etcd-cluster2:certificates
+  - easyrsa-cluster2:client
+- - calico-cluster2:cni
+  - kubernetes-master-cluster2:cni
+- - calico-cluster2:cni
+  - kubernetes-worker-cluster2:cni
+
+- - calico-cluster2:etcd
+  - etcd-cluster2:db
