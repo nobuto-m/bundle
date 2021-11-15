@@ -59,6 +59,11 @@ applications:
     options:
       ignore-loose-rpf: true
       ipip: Always
+  containerd-cluster1:
+    annotations:
+      gui-x: '475'
+      gui-y: '800'
+    charm: cs:~containers/containerd-178
   easyrsa-cluster1:
     annotations:
       gui-x: '90'
@@ -138,6 +143,11 @@ applications:
     options:
       ignore-loose-rpf: true
       ipip: Always
+  containerd-cluster2:
+    annotations:
+      gui-x: '475'
+      gui-y: '800'
+    charm: cs:~containers/containerd-178
   easyrsa-cluster2:
     annotations:
       gui-x: '90'
@@ -220,6 +230,10 @@ relations:
   - kubernetes-master-cluster1:cni
 - - calico-cluster1:cni
   - kubernetes-worker-cluster1:cni
+- - containerd-cluster1:containerd
+  - kubernetes-worker-cluster1:container-runtime
+- - containerd-cluster1:containerd
+  - kubernetes-master-cluster1:container-runtime
 
 - - calico-cluster1:etcd
   - etcd-shared:db
@@ -238,6 +252,10 @@ relations:
   - kubernetes-master-cluster2:cni
 - - calico-cluster2:cni
   - kubernetes-worker-cluster2:cni
+- - containerd-cluster2:containerd
+  - kubernetes-worker-cluster2:container-runtime
+- - containerd-cluster2:containerd
+  - kubernetes-master-cluster2:container-runtime
 
 - - calico-cluster2:etcd
   - etcd-shared:db
