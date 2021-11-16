@@ -1,0 +1,35 @@
+description: A minimal two-machine Kubernetes cluster, appropriate for development.
+series: focal
+machines:
+  '0':
+    constraints: cores=2 mem=4G root-disk=16G
+    series: focal
+
+applications:
+  easyrsa-external:
+    annotations:
+      gui-x: '90'
+      gui-y: '420'
+    charm: cs:~containers/easyrsa-420
+    num_units: 1
+    resources:
+      easyrsa: 5
+    to:
+    - lxd:0
+  etcd-external:
+    annotations:
+      gui-x: '800'
+      gui-y: '420'
+    charm: cs:~containers/etcd-634
+    num_units: 1
+    options:
+      channel: 3.4/stable
+    resources:
+      core: 0
+      etcd: 3
+      snapshot: 0
+    to:
+    - '0'
+relations:
+- - etcd-external:certificates
+  - easyrsa-external:client
