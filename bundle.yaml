@@ -20,7 +20,7 @@ machines:
     series: focal
 
 applications:
-  easyrsa-shared:
+  easyrsa-external:
     annotations:
       gui-x: '90'
       gui-y: '420'
@@ -30,7 +30,7 @@ applications:
       easyrsa: 5
     to:
     - lxd:4
-  etcd-shared:
+  etcd-external:
     annotations:
       gui-x: '800'
       gui-y: '420'
@@ -213,8 +213,8 @@ applications:
     to:
     - '3'
 relations:
-- - etcd-shared:certificates
-  - easyrsa-shared:client
+- - etcd-external:certificates
+  - easyrsa-external:client
 
 - - kubernetes-master-cluster1:kube-control
   - kubernetes-worker-cluster1:kube-control
@@ -236,7 +236,7 @@ relations:
   - kubernetes-master-cluster1:container-runtime
 
 - - calico-cluster1:etcd
-  - etcd-shared:db
+  - etcd-external:db
 
 - - kubernetes-master-cluster2:kube-control
   - kubernetes-worker-cluster2:kube-control
@@ -258,4 +258,4 @@ relations:
   - kubernetes-master-cluster2:container-runtime
 
 - - calico-cluster2:etcd
-  - etcd-shared:db
+  - etcd-external:db
