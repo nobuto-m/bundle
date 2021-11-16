@@ -37,6 +37,10 @@ relations:
 --- # overlay.yaml
 applications:
   etcd-external:
+    exposed-endpoints:
+      db:
+        expose-to-spaces:
+        - alpha
     offers:
       etcd-external:
         endpoints:
