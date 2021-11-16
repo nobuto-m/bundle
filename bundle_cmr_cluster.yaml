@@ -1,5 +1,9 @@
 description: A minimal two-machine Kubernetes cluster, appropriate for development.
 series: focal
+saas:
+  etcd-external:
+    #url: aws-ap-northeast-1:admin/external-etcd.etcd-external
+    url: external-etcd.etcd-external
 machines:
   '0':
     constraints: cores=2 mem=4G root-disk=16G
@@ -110,3 +114,6 @@ relations:
   - kubernetes-worker:container-runtime
 - - containerd:containerd
   - kubernetes-master:container-runtime
+
+- - calico:etcd
+  - etcd-external:db

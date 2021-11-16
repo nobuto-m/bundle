@@ -33,3 +33,13 @@ applications:
 relations:
 - - etcd-external:certificates
   - easyrsa-external:client
+
+--- # overlay.yaml
+applications:
+  etcd-external:
+    offers:
+      etcd-external:
+        endpoints:
+        - db
+        acl:
+          admin: admin
