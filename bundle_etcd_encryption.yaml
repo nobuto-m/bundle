@@ -1,0 +1,159 @@
+series: focal
+applications:
+  calico:
+    charm: cs:~containers/calico
+    channel: stable
+    revision: 838
+    resources:
+      calico: 977
+      calico-arm64: 976
+      calico-node-image: 659
+      calico-upgrade: 804
+      calico-upgrade-arm64: 804
+    annotations:
+      gui-x: "475"
+      gui-y: "605"
+  containerd:
+    charm: cs:~containers/containerd
+    channel: stable
+    revision: 178
+    annotations:
+      gui-x: "475"
+      gui-y: "800"
+  easyrsa:
+    charm: cs:~containers/easyrsa
+    channel: stable
+    revision: 420
+    resources:
+      easyrsa: 5
+    num_units: 1
+    to:
+    - lxd:0
+    annotations:
+      gui-x: "90"
+      gui-y: "420"
+  etcd:
+    charm: cs:~containers/etcd
+    channel: stable
+    revision: 634
+    resources:
+      core: 0
+      etcd: 3
+      snapshot: 0
+    num_units: 1
+    to:
+    - "0"
+    options:
+      channel: 3.4/stable
+    annotations:
+      gui-x: "800"
+      gui-y: "420"
+  kubernetes-master:
+    charm: cs:~containers/kubernetes-master
+    channel: stable
+    revision: 1078
+    resources:
+      cdk-addons: 0
+      core: 0
+      kube-apiserver: 0
+      kube-controller-manager: 0
+      kube-proxy: 0
+      kube-scheduler: 0
+      kubectl: 0
+    num_units: 1
+    to:
+    - "0"
+    expose: true
+    options:
+      channel: 1.22/stable
+    annotations:
+      gui-x: "800"
+      gui-y: "850"
+    constraints: cpu-cores=2 mem=4096 root-disk=16384
+  kubernetes-worker:
+    charm: cs:~containers/kubernetes-worker
+    channel: stable
+    revision: 816
+    resources:
+      cni-amd64: 933
+      cni-arm64: 924
+      cni-s390x: 936
+      core: 0
+      kube-proxy: 0
+      kubectl: 0
+      kubelet: 0
+    num_units: 1
+    to:
+    - "1"
+    expose: true
+    options:
+      channel: 1.22/stable
+    annotations:
+      gui-x: "90"
+      gui-y: "850"
+    constraints: cpu-cores=4 mem=4096 root-disk=16384
+  mysql-innodb-cluster:
+    charm: mysql-innodb-cluster
+    channel: stable
+    revision: 15
+    resources:
+      mysql-shell: 0
+    num_units: 3
+    to:
+    - "2"
+    - "3"
+    - "4"
+  vault:
+    charm: vault
+    channel: stable
+    revision: 54
+    resources:
+      core: 0
+      vault: 0
+    num_units: 1
+    to:
+    - "5"
+  vault-mysql-router:
+    charm: mysql-router
+    channel: stable
+    revision: 15
+machines:
+  "0":
+    constraints: cpu-cores=2 mem=4096 root-disk=16384
+  "1":
+    constraints: cpu-cores=4 mem=4096 root-disk=16384
+  "2":
+    constraints: arch=amd64
+  "3":
+    constraints: arch=amd64
+  "4":
+    constraints: arch=amd64
+  "5":
+    constraints: arch=amd64
+relations:
+- - kubernetes-master:kube-control
+  - kubernetes-worker:kube-control
+- - kubernetes-master:certificates
+  - easyrsa:client
+- - kubernetes-master:etcd
+  - etcd:db
+- - kubernetes-worker:certificates
+  - easyrsa:client
+- - etcd:certificates
+  - easyrsa:client
+- - calico:etcd
+  - etcd:db
+- - calico:cni
+  - kubernetes-master:cni
+- - calico:cni
+  - kubernetes-worker:cni
+- - containerd:containerd
+  - kubernetes-worker:container-runtime
+- - containerd:containerd
+  - kubernetes-master:container-runtime
+- - vault:shared-db
+  - vault-mysql-router:shared-db
+- - vault-mysql-router:db-router
+  - mysql-innodb-cluster:db-router
+- - kubernetes-master:vault-kv
+  - vault:secrets
