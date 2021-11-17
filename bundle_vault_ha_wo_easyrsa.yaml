@@ -2,12 +2,6 @@ series: focal
 applications:
   etcd:
     charm: etcd
-    channel: stable
-    revision: 634
-    resources:
-      core: 0
-      etcd: 3
-      snapshot: 0
     num_units: 3
     to:
     - lxd:0
@@ -15,10 +9,6 @@ applications:
     - lxd:2
   mysql-innodb-cluster:
     charm: mysql-innodb-cluster
-    channel: stable
-    revision: 15
-    resources:
-      mysql-shell: 0
     num_units: 3
     to:
     - lxd:0
@@ -26,11 +16,6 @@ applications:
     - lxd:2
   vault:
     charm: vault
-    channel: stable
-    revision: 54
-    resources:
-      core: 0
-      vault: 0
     num_units: 3
     to:
     - lxd:0
@@ -40,12 +25,8 @@ applications:
       vip: 192.168.151.81
   vault-hacluster:
     charm: hacluster
-    channel: stable
-    revision: 83
   vault-mysql-router:
     charm: mysql-router
-    channel: stable
-    revision: 15
 machines:
   "0":
     constraints: arch=amd64
