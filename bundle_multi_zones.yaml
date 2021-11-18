@@ -1,0 +1,106 @@
+series: focal
+applications:
+  calico:
+    charm: cs:~containers/calico
+    options:
+      ignore-loose-rpf: true
+    annotations:
+      gui-x: "475"
+      gui-y: "605"
+  containerd:
+    charm: cs:~containers/containerd
+    annotations:
+      gui-x: "475"
+      gui-y: "800"
+  easyrsa:
+    charm: cs:~containers/easyrsa
+    num_units: 1
+    to:
+    - "0"
+    annotations:
+      gui-x: "90"
+      gui-y: "420"
+    constraints: zones=default
+  etcd:
+    charm: cs:~containers/etcd
+    num_units: 1
+    to:
+    - "0"
+    options:
+      channel: 3.4/stable
+    annotations:
+      gui-x: "800"
+      gui-y: "420"
+    constraints: zones=default
+  kubernetes-master:
+    charm: cs:~containers/kubernetes-master
+    num_units: 1
+    to:
+    - "0"
+    expose: true
+    options:
+      channel: 1.22/stable
+    annotations:
+      gui-x: "800"
+      gui-y: "850"
+    constraints: zones=default
+  kubernetes-worker-zone2:
+    charm: cs:~containers/kubernetes-worker
+    num_units: 1
+    to:
+    - "1"
+    expose: true
+    options:
+      channel: 1.22/stable
+    annotations:
+      gui-x: "90"
+      gui-y: "850"
+    constraints: zones=zone2
+  kubernetes-worker-zone3:
+    charm: cs:~containers/kubernetes-worker
+    num_units: 1
+    to:
+    - "2"
+    expose: true
+    options:
+      channel: 1.22/stable
+    annotations:
+      gui-x: "90"
+      gui-y: "850"
+    constraints: zones=zone3
+machines:
+  "0":
+    constraints: cpu-cores=2 mem=4096 root-disk=16384 zones=default
+  "1":
+    constraints: cpu-cores=4 mem=4096 root-disk=16384 zones=zone2
+  "2":
+    constraints: cpu-cores=4 mem=4096 root-disk=16384 zones=zone3
+relations:
+- - kubernetes-master:kube-control
+  - kubernetes-worker-zone2:kube-control
+- - kubernetes-master:certificates
+  - easyrsa:client
+- - kubernetes-master:etcd
+  - etcd:db
+- - kubernetes-worker-zone2:certificates
+  - easyrsa:client
+- - etcd:certificates
+  - easyrsa:client
+- - containerd:containerd
+  - kubernetes-worker-zone2:container-runtime
+- - containerd:containerd
+  - kubernetes-master:container-runtime
+- - calico:etcd
+  - etcd:db
+- - calico:cni
+  - kubernetes-master:cni
+- - calico:cni
+  - kubernetes-worker-zone2:cni
+- - kubernetes-master:kube-control
+  - kubernetes-worker-zone3:kube-control
+- - kubernetes-worker-zone3:certificates
+  - easyrsa:client
+- - containerd:containerd
+  - kubernetes-worker-zone3:container-runtime
+- - calico:cni
+  - kubernetes-worker-zone3:cni
