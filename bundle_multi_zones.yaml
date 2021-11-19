@@ -83,11 +83,11 @@ applications:
     constraints: zones=zone3
 machines:
   "0":
-    constraints: cpu-cores=2 mem=4096 root-disk=16384 zones=default
+    constraints: cpu-cores=2 mem=4096 root-disk=16384 tags=calico-rr zones=default
   "1":
-    constraints: cpu-cores=4 mem=4096 root-disk=16384 zones=zone2
+    constraints: cpu-cores=4 mem=4096 root-disk=16384 tags=calico-rr zones=zone2
   "2":
-    constraints: cpu-cores=4 mem=4096 root-disk=16384 zones=zone3
+    constraints: cpu-cores=4 mem=4096 root-disk=16384 tags=calico-rr zones=zone3
 relations:
 - - kubernetes-master:kube-control
   - kubernetes-worker-zone2:kube-control
