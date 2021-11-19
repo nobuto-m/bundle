@@ -52,6 +52,7 @@ applications:
     expose: true
     options:
       channel: 1.22/stable
+      labels: topology.kubernetes.io/zone=zone2
     annotations:
       gui-x: "90"
       gui-y: "850"
@@ -64,6 +65,7 @@ applications:
     expose: true
     options:
       channel: 1.22/stable
+      labels: topology.kubernetes.io/zone=zone3
     annotations:
       gui-x: "90"
       gui-y: "850"
