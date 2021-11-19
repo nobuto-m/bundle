@@ -6,6 +6,9 @@ applications:
       ignore-loose-rpf: true
       global-as-number: 64512
       subnet-bgp-peers: |
+        192.168.151.0/24:
+        - address: 192.168.151.1
+          as-number: 64512
         192.168.152.0/24:
         - address: 192.168.152.1
           as-number: 64512
